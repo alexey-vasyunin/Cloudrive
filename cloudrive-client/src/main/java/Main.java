@@ -9,9 +9,11 @@ import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import java.io.FileReader;
+import java.util.Queue;
 
 
 public class Main extends Application {
+
     public static void main(String[] args) {
         launch(args);
     }
