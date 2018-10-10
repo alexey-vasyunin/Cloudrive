@@ -1,3 +1,4 @@
+import com.cloudrive.client.Client;
 import com.cloudrive.client.filelist.FileListItem;
 import com.cloudrive.client.filelist.ItemType;
 import javafx.collections.FXCollections;
@@ -5,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -19,6 +21,9 @@ import java.util.ResourceBundle;
 public class Controller implements Initializable {
     @FXML
     TableView<FileListItem> fileList;
+
+    @FXML
+    Button send;
 
     public PriorityQueue<File> queueFilesSend; // очередь файлов на отправку
 
@@ -65,7 +70,13 @@ public class Controller implements Initializable {
             Dragboard dragboard = event.getDragboard();
             boolean result = false;
             for (int i = 0; i < dragboard.getFiles().size(); i++) {
-                queueFilesSend.add(dragboard.getFiles().get(i));
+//                queueFilesSend.add(dragboard.getFiles().get(i));
+                try {
+                    Client.getInstance().sendFileToStorage(dragboard.getFiles().get(i));
+                } catch (InterruptedException e) {
+                    System.out.println("Что то пошло не так при отправке файла");
+                    e.printStackTrace();
+                }
                 System.out.println(dragboard.getFiles().get(i).isDirectory());
                 result = true;
             }
@@ -74,5 +85,12 @@ public class Controller implements Initializable {
             System.out.println(queueFilesSend);
             //queueFilesSend.clear();
         });
+    }
+
+
+
+    public void buttonSendClicked(ActionEvent actionEvent) {
+        System.out.println("Send (controller)");
+        Client.getInstance().send();
     }
 }

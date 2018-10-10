@@ -17,6 +17,12 @@
         <artifactId>maven-model</artifactId>
         <version>3.5.4</version>
     </dependency>
+    <dependency>
+        <groupId>com.gb.java5.projects</groupId>
+        <artifactId>cloudrive-common</artifactId>
+        <version>1.0-SNAPSHOT</version>
+        <scope>compile</scope>
+    </dependency>
 </dependencies>
 
 </project>
