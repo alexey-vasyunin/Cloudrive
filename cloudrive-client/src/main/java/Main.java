@@ -1,4 +1,5 @@
 import com.cloudrive.client.Client;
+import com.cloudrive.client.Controller;
 import com.cloudrive.common.Settings;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -24,13 +25,18 @@ public class Main extends Application {
         MavenXpp3Reader reader = new MavenXpp3Reader();
         Model model = reader.read(new FileReader("pom.xml"));
         System.out.println(model.getVersion());
+//
+        FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/clientMain.fxml"));
+        Parent root = fxmlLoader.load();
 
-        Parent root = FXMLLoader.load(getClass().getResource("/clientMain.fxml"));
         primaryStage.setTitle("Cloudrive v" + model.getVersion());
         Scene scene = new Scene(root, 650, 450);
         primaryStage.setScene(scene);
 
         primaryStage.show();
-        new Thread(Client.getInstance()).start();
+        Client client = Client.getInstance();
+        client.setController(fxmlLoader.getController());
+        new Thread(client).start();
+
     }
 }

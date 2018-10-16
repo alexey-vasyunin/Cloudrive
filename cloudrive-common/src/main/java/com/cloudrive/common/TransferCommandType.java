@@ -1,8 +1,11 @@
 package com.cloudrive.common;
 
-public enum TransferCommandType {
+import java.io.Serializable;
+
+public enum TransferCommandType implements Serializable {
     RENAME,
     DELETE,
     GET,
-    ISEXISTS
+    ISEXISTS,
+    GETDIRLIST
 }

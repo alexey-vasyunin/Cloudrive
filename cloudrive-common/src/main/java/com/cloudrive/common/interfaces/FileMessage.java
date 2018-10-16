@@ -1,4 +1,4 @@
-package com.cloudrive.common;
+package com.cloudrive.common.interfaces;
 
 public interface FileMessage {
     int getPartSize();

@@ -1,6 +1,9 @@
 package com.cloudrive.common;
 
 
+import com.cloudrive.common.interfaces.FileMessage;
+import com.cloudrive.common.interfaces.TransferCommon;
+
 import java.io.Serializable;
 
 public class PartOfFileMessage implements FileMessage, TransferCommon, Serializable {

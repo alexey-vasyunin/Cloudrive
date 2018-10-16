@@ -1,5 +1,10 @@
 package com.cloudrive.server;
 
+import com.cloudrive.common.handlers.FilterHandlerInbound;
+import com.cloudrive.common.handlers.FilterHandlerOutbound;
+import com.cloudrive.server.handlers.AuthHandler;
+import com.cloudrive.server.handlers.DirListInboundHandler;
+import com.cloudrive.server.handlers.PartOfFileInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
@@ -30,15 +35,16 @@ public class CloudriveServer implements Runnable {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new PartOfFileInboundHandler()
+                                    new AuthHandler()
                             );
                         }
                     })
-                    .childOption(ChannelOption.SO_KEEPALIVE, true);
-
-            ChannelFuture f = b.bind(7246).sync();
-
-            f.channel().closeFuture().sync();
+                    .childOption(ChannelOption.SO_KEEPALIVE, true)
+                    .bind(7246)
+                    .sync()
+                    .channel()
+                    .closeFuture()
+                    .sync();
 
         } catch (InterruptedException e) {
             e.printStackTrace();

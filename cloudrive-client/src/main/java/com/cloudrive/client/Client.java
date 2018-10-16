@@ -1,9 +1,15 @@
 package com.cloudrive.client;
 
 import com.cloudrive.client.filelist.FileListItem;
+import com.cloudrive.client.handlers.RemoteDirListInboundHandler;
 import com.cloudrive.client.handlers.TestClientInboundHandler;
 import com.cloudrive.client.handlers.TestClientOutboundHandler;
+import com.cloudrive.common.AuthMessage;
+import com.cloudrive.common.Command;
 import com.cloudrive.common.PartOfFileMessage;
+import com.cloudrive.common.TransferCommandType;
+import com.cloudrive.common.handlers.FilterHandlerInbound;
+import com.cloudrive.common.handlers.FilterHandlerOutbound;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -17,11 +23,23 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 public class Client implements Runnable {
 
     private Channel channel;
     private static Client instance = new Client();
+
+    public Controller getController() {
+        return controller;
+    }
+
+    public void setController(Controller controller) {
+        this.controller = controller;
+    }
+
+    private Controller controller;
 
     public Channel getChannel(){
         return channel;
@@ -49,16 +67,18 @@ public class Client implements Runnable {
                         protected void initChannel(SocketChannel socketChannel) throws Exception {
                             channel = socketChannel;
                             socketChannel.pipeline().addLast(
-                                    new ObjectDecoder(1024, ClassResolvers.cacheDisabled(null)),
+                                    new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new TestClientInboundHandler(),
-                                    new TestClientOutboundHandler(1),
-                                    new TestClientOutboundHandler(2)
+                                    new FilterHandlerInbound(),
+                                    new FilterHandlerOutbound(),
+                                    new RemoteDirListInboundHandler()
                             );
                         }
                     });
 
             ChannelFuture channelFuture = bootstrap.connect().sync();
+            sendAuthMessage();
+            getDirList(null);
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
             e.printStackTrace();
@@ -72,14 +92,24 @@ public class Client implements Runnable {
 
     }
 
-    public void send(){
-        System.out.println("buttonSendClicked (client)");
-        channel.writeAndFlush(new PartOfFileMessage());
+    /**
+     * Отправить файл по каналу
+     * @param file Отправляемый файл
+     * @throws InterruptedException
+     */
+    public void sendFileToStorage(File file) {
+        Thread thread = new FileSendThread(file, channel);
+        thread.start();
     }
 
-    public void sendFileToStorage(File file) throws InterruptedException {
-        Thread thread = new Thread(new FileSendThread(file, channel));
+    public void getDirList(String path) throws InterruptedException {
+        Thread thread = new Thread(() -> {
+            channel.writeAndFlush(new Command(TransferCommandType.GETDIRLIST, path));
+        });
         thread.start();
-        thread.join();
+    }
+
+    public void sendAuthMessage(){
+        channel.writeAndFlush(new AuthMessage("user1", "password1"));
     }
 }

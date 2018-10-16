@@ -1,8 +1,6 @@
 package com.cloudrive.client.filelist;
 
-import com.cloudrive.common.TransferCommand;
-
-import java.io.File;
+import com.cloudrive.common.interfaces.TransferCommand;
 
 public class FileQueueItem {
     private TransferCommand file;

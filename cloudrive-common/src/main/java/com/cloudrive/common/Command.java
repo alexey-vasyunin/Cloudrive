@@ -1,11 +1,11 @@
 package com.cloudrive.common;
 
-import com.cloudrive.common.TransferCommand;
-import com.cloudrive.common.TransferCommandType;
-import com.cloudrive.common.TransferCommon;
-import com.cloudrive.common.TransferObjectType;
+import com.cloudrive.common.interfaces.TransferCommand;
+import com.cloudrive.common.interfaces.TransferCommon;
 
-public class Command implements TransferCommon, TransferCommand {
+import java.io.Serializable;
+
+public class Command implements TransferCommon, TransferCommand, Serializable {
 
     private TransferCommandType command;
     private String[] params;

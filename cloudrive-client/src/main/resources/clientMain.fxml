@@ -6,12 +6,12 @@
 
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.Button?>
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.121" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cloudrive.client.Controller">
     <VBox fillWidth="true">
         <TableView editable="true" prefWidth="Infinity" fx:id="fileList">
 
         </TableView>
-        <Button fx:id="send" onAction="#buttonSendClicked">Send</Button>
+        <Button fx:id="send">Send</Button>
     </VBox>
 
 </AnchorPane>
