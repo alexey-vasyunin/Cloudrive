@@ -4,15 +4,23 @@ import com.cloudrive.common.*;
 import com.cloudrive.common.interfaces.TransferCommand;
 import com.cloudrive.common.interfaces.TransferCommon;
 import com.cloudrive.server.CloudriveServer;
+import com.cloudrive.server.UserProps;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 public class DirListInboundHandler extends ChannelInboundHandlerAdapter {
+
+    private UserProps user;
+
+    public DirListInboundHandler(UserProps user) {
+        this.user = user;
+    }
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (((TransferCommon) msg).getType() == TransferObjectType.COMMAND && ((TransferCommand) msg).getCommandType() == TransferCommandType.GETDIRLIST) {
             System.out.println("GetDisrList");
-            ctx.write(new DirMessage(CloudriveServer.STORAGE_PATH));
+            ctx.write(new DirMessage(CloudriveServer.STORAGE_PATH + "\\" + user.storagename ));
         } else {
             ctx.fireChannelRead(msg);
         }

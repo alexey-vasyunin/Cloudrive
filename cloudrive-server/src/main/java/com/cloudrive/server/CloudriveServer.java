@@ -35,6 +35,8 @@ public class CloudriveServer implements Runnable {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
+                                    new FilterHandlerInbound(),
+                                    new FilterHandlerOutbound(),
                                     new AuthHandler()
                             );
                         }

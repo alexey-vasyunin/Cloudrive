@@ -5,11 +5,11 @@ import com.cloudrive.common.interfaces.TransferCommon;
 import java.io.Serializable;
 
 public class AuthMessage implements Serializable, TransferCommon {
-    public String login;
+    public String email;
     public String passsword;
 
-    public AuthMessage(String login, String passsword) {
-        this.login = login;
+    public AuthMessage(String email, String passsword) {
+        this.email = email;
         this.passsword = passsword;
     }
 

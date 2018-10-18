@@ -100,6 +100,7 @@ public class Client implements Runnable {
     public void sendFileToStorage(File file) {
         Thread thread = new FileSendThread(file, channel);
         thread.start();
+        thread.setDaemon(true);
     }
 
     public void getDirList(String path) throws InterruptedException {
@@ -107,9 +108,10 @@ public class Client implements Runnable {
             channel.writeAndFlush(new Command(TransferCommandType.GETDIRLIST, path));
         });
         thread.start();
+//        thread.setDaemon(true);
     }
 
     public void sendAuthMessage(){
-        channel.writeAndFlush(new AuthMessage("user1", "password1"));
+        channel.writeAndFlush(new AuthMessage("user3@vasyunin.ru", "password3"));
     }
 }

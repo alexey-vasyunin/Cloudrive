@@ -36,7 +36,9 @@ public class Main extends Application {
         primaryStage.show();
         Client client = Client.getInstance();
         client.setController(fxmlLoader.getController());
-        new Thread(client).start();
+        Thread thread = new Thread(client);
+        thread.start();
+//        thread.setDaemon(true);
 
     }
 }
