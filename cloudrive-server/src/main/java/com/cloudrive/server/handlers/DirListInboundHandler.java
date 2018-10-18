@@ -19,7 +19,6 @@ public class DirListInboundHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (((TransferCommon) msg).getType() == TransferObjectType.COMMAND && ((TransferCommand) msg).getCommandType() == TransferCommandType.GETDIRLIST) {
-            System.out.println("GetDisrList");
             ctx.write(new DirMessage(CloudriveServer.STORAGE_PATH + "\\" + user.storagename ));
         } else {
             ctx.fireChannelRead(msg);

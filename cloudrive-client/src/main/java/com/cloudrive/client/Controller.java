@@ -10,11 +10,14 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
 
 import java.io.File;
 import java.net.URL;
@@ -28,7 +31,9 @@ public class Controller implements Initializable {
     TableView<FileListItem> fileList;
 
     @FXML
-    Button send;
+    Button sendButton;
+    @FXML
+    Button downloadButton;
 
     private ObservableList<FileListItem> files;
 
@@ -61,6 +66,7 @@ public class Controller implements Initializable {
             Обрабатываем событие Drag'n'Drop (протаскивание над списком файлов)
          */
         fileList.setOnDragOver(event -> {
+            System.out.println(event);
             if (event.getGestureSource() != fileList && event.getDragboard().hasFiles()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
@@ -81,12 +87,23 @@ public class Controller implements Initializable {
             event.setDropCompleted(result);
             event.consume();
         });
+
+        fileList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
 
     public void buttonSendClicked(ActionEvent actionEvent) {
         System.out.println("Send (controller)");
-        //Client.getInstance().send();
+    }
+
+    public void downloadButtonAction(ActionEvent actionEvent){
+        fileList.getSelectionModel().getSelectedItems().forEach(fileListItem -> {
+            System.out.println(fileListItem.getName());
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Save file");
+            fileChooser.setInitialFileName(fileListItem.getName());
+            File file = fileChooser.showSaveDialog(downloadButton.getScene().getWindow());
+        });
     }
 
     public void refreshFileList(ArrayList<DirMessage.FileItem> fli) {
@@ -94,4 +111,6 @@ public class Controller implements Initializable {
             files.add(new FileListItem(ItemType.FILE, fileItem.getFilename(), (int) fileItem.getSize(), null));
         });
     }
+
+
 }

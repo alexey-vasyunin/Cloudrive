@@ -12,11 +12,8 @@ public class RemoteDirListInboundHandler extends ChannelInboundHandlerAdapter {
 
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-        System.out.println("RemoteDirListInboundHandler");
         if (((TransferCommon)msg).getType() == TransferObjectType.DIRLIST){
-            System.out.println("RemoteDirListInboundHandler DirList");
             DirMessage dm = (DirMessage)msg;
-            System.out.println("####" + Client.getInstance().getController());
             Platform.runLater(() -> Client.getInstance().getController().refreshFileList(dm.getFiles()));
 
          } else {

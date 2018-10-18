@@ -48,15 +48,6 @@ public class DirMessage implements TransferCommon, Serializable {
         private long size;
         private boolean isDirectory;
 
-        @Override
-        public String toString() {
-            return "FileItem{" +
-                    "filename='" + filename + '\'' +
-                    ", size=" + size +
-                    ", isDirectory=" + isDirectory +
-                    '}';
-        }
-
         public FileItem(String filename, long size, boolean isDirectory) {
             this.filename = filename;
             this.size = size;

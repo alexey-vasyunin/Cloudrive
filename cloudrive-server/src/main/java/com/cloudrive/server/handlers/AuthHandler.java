@@ -2,12 +2,9 @@ package com.cloudrive.server.handlers;
 
 import com.cloudrive.common.AuthMessage;
 import com.cloudrive.common.TransferObjectType;
-import com.cloudrive.common.handlers.FilterHandlerInbound;
-import com.cloudrive.common.handlers.FilterHandlerOutbound;
 import com.cloudrive.common.interfaces.TransferCommon;
 import com.cloudrive.server.AuthDB;
 import com.cloudrive.server.UserProps;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
