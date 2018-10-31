@@ -15,9 +15,11 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
         if (((TransferCommon) msg).getType() == TransferObjectType.AUTH) {
             String storagename = AuthDB.getInstance().checkUser((AuthMessage) msg);
             if (storagename != null) {
+                UserProps userProps = new UserProps(storagename);
                 ctx.pipeline()
-                        .addLast(new PartOfFileInboundHandler(new UserProps(storagename)))
-                        .addLast(new DirListInboundHandler(new UserProps(storagename)))
+                        .addLast(new PartOfFileInboundHandler(userProps))
+                        .addLast(new DirListInboundHandler(userProps))
+                        .addLast(new RequestFileInboundHandler(userProps))
                         .remove(this); // Мы авторизовались и хендлер авторизации более не нужен
             } else {
                 System.out.println("Wrong username or password!");

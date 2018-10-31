@@ -7,5 +7,6 @@ public enum TransferCommandType implements Serializable {
     DELETE,
     GET,
     ISEXISTS,
-    GETDIRLIST
+    GETDIRLIST,
+    FILEREQUEST
 }

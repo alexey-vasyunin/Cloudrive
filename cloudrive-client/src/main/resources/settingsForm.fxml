@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cloudrive.client.settingsController">
+    <columnConstraints>
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="189.0" minWidth="10.0" prefWidth="46.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="377.0" minWidth="10.0" prefWidth="331.0" />
+        <ColumnConstraints hgrow="SOMETIMES" maxWidth="100.0" minWidth="10.0" prefWidth="45.0" />
+    </columnConstraints>
+    <rowConstraints>
+        <RowConstraints maxHeight="161.0" minHeight="10.0" prefHeight="59.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="168.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="168.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="168.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="200.0" minHeight="0.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+        <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+      <RowConstraints maxHeight="272.0" minHeight="10.0" prefHeight="50.0" vgrow="SOMETIMES" />
+    </rowConstraints>
+    <children>
+        <HBox prefHeight="100.0" prefWidth="350.0" spacing="5" GridPane.columnIndex="1" GridPane.rowIndex="3">
+           <children>
+               <TextField fx:id="folderTextField" prefHeight="25.0" prefWidth="250" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+               <Button fx:id="folderButton" mnemonicParsing="false" onAction="#chooseFolder" text="Select folder" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+           </children>
+        </HBox>
+        <CheckBox fx:id="autorunCheckbox" mnemonicParsing="false" text="Autostart with the system" GridPane.columnIndex="1" GridPane.rowIndex="4" />
+        <CheckBox fx:id="autoconnectCheckbox" mnemonicParsing="false" text="Autoconnect after start" GridPane.columnIndex="1" GridPane.rowIndex="5" />
+        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Settings" textAlignment="CENTER" GridPane.columnIndex="1" GridPane.halignment="CENTER">
+            <font>
+                <Font size="18.0" />
+            </font>
+        </Text>
+        <Button fx:id="saveSettingsButton" mnemonicParsing="false" onAction="#saveSettings" text="Сохранить" GridPane.columnIndex="1" GridPane.halignment="CENTER" GridPane.rowIndex="7" />
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1">
+         <children>
+            <Label prefWidth="100.0" text="E-mail" />
+            <TextField fx:id="emailTextField" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+      <HBox prefHeight="100.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="2">
+         <children>
+            <Label prefWidth="100.0" text="Password" />
+            <PasswordField fx:id="passwordTextField" HBox.hgrow="ALWAYS" />
+         </children>
+      </HBox>
+    </children>
+</GridPane>

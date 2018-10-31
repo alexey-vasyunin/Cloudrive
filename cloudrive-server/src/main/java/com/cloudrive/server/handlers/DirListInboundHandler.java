@@ -8,6 +8,8 @@ import com.cloudrive.server.UserProps;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.io.File;
+
 public class DirListInboundHandler extends ChannelInboundHandlerAdapter {
 
     private UserProps user;
@@ -19,7 +21,7 @@ public class DirListInboundHandler extends ChannelInboundHandlerAdapter {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (((TransferCommon) msg).getType() == TransferObjectType.COMMAND && ((TransferCommand) msg).getCommandType() == TransferCommandType.GETDIRLIST) {
-            ctx.write(new DirMessage(CloudriveServer.STORAGE_PATH + "\\" + user.storagename ));
+            ctx.writeAndFlush(new DirMessage(CloudriveServer.STORAGE_PATH + File.separator + user.storagename ));
         } else {
             ctx.fireChannelRead(msg);
         }

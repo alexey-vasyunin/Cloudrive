@@ -3,12 +3,15 @@ package com.cloudrive.client;
 import com.cloudrive.client.Client;
 import com.cloudrive.client.filelist.FileListItem;
 import com.cloudrive.client.filelist.ItemType;
-import com.cloudrive.common.DirMessage;
+import com.cloudrive.common.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
@@ -17,16 +20,18 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.PriorityQueue;
 import java.util.ResourceBundle;
 
-public class Controller implements Initializable {
+public class mainController implements Initializable {
     @FXML
     TableView<FileListItem> fileList;
 
@@ -98,11 +103,20 @@ public class Controller implements Initializable {
 
     public void downloadButtonAction(ActionEvent actionEvent){
         fileList.getSelectionModel().getSelectedItems().forEach(fileListItem -> {
-            System.out.println(fileListItem.getName());
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Save file");
-            fileChooser.setInitialFileName(fileListItem.getName());
-            File file = fileChooser.showSaveDialog(downloadButton.getScene().getWindow());
+            System.out.println("Requering " + fileListItem.getName());
+            Thread thread = new Thread(() -> {
+                for (int i = 0; i < fileListItem.getSize() / Settings.PART_FILE_SIZE; i++) {
+                    Client.getInstance().getChannel().writeAndFlush(
+                            new PartOfFileRequest(
+                                    fileListItem.getName(),
+                                    i*Settings.PART_FILE_SIZE,
+                                    Settings.PART_FILE_SIZE)
+                    );
+                }
+
+            });
+            thread.setDaemon(true);
+            thread.start();
         });
     }
 
@@ -113,4 +127,18 @@ public class Controller implements Initializable {
     }
 
 
+    public void settingsApplication(ActionEvent actionEvent) {
+        try {
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoaderConnect = new FXMLLoader(getClass().getResource("/settingsForm.fxml"));
+            Parent root = fxmlLoaderConnect.load();
+            Scene scene = new Scene(root, 500, 380);
+            stage.setScene(scene);
+            stage.initModality(Modality.APPLICATION_MODAL);
+            stage.showAndWait();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 }

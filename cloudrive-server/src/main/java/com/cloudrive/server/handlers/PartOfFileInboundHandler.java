@@ -7,6 +7,7 @@ import com.cloudrive.server.UserProps;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
+import java.io.File;
 import java.io.RandomAccessFile;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -27,7 +28,7 @@ public class PartOfFileInboundHandler extends ChannelInboundHandlerAdapter {
             // Если прилетела часть какого то файла
             PartOfFileMessage pf = (PartOfFileMessage)obj;
 
-            Path p = Paths.get(CloudriveServer.STORAGE_PATH + "\\" + user.storagename + "\\" + pf.getFilename());
+            Path p = Paths.get(CloudriveServer.STORAGE_PATH + File.separator + user.storagename + File.separator + pf.getFilename());
 
             if (!Files.exists(p)) Files.createFile(p);
 

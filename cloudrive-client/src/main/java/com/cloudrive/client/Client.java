@@ -1,12 +1,9 @@
 package com.cloudrive.client;
 
-import com.cloudrive.client.filelist.FileListItem;
+import com.cloudrive.client.handlers.DownloadFileInboundHandler;
 import com.cloudrive.client.handlers.RemoteDirListInboundHandler;
-import com.cloudrive.client.handlers.TestClientInboundHandler;
-import com.cloudrive.client.handlers.TestClientOutboundHandler;
 import com.cloudrive.common.AuthMessage;
 import com.cloudrive.common.Command;
-import com.cloudrive.common.PartOfFileMessage;
 import com.cloudrive.common.TransferCommandType;
 import com.cloudrive.common.handlers.FilterHandlerInbound;
 import com.cloudrive.common.handlers.FilterHandlerOutbound;
@@ -23,23 +20,21 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 public class Client implements Runnable {
 
     private Channel channel;
     private static Client instance = new Client();
 
-    public Controller getController() {
-        return controller;
+    public mainController getMainController() {
+        return mainController;
     }
 
-    public void setController(Controller controller) {
-        this.controller = controller;
+    public void setMainController(mainController mainController) {
+        this.mainController = mainController;
     }
 
-    private Controller controller;
+    private mainController mainController;
 
     public Channel getChannel(){
         return channel;
@@ -71,13 +66,14 @@ public class Client implements Runnable {
                                     new ObjectEncoder(),
                                     new FilterHandlerInbound(),
                                     new FilterHandlerOutbound(),
-                                    new RemoteDirListInboundHandler()
+                                    new RemoteDirListInboundHandler(),
+                                    new DownloadFileInboundHandler()
                             );
                         }
                     });
 
             ChannelFuture channelFuture = bootstrap.connect().sync();
-            sendAuthMessage();
+            sendAuthMessage(AppSettings.getInstance().getEmail(), AppSettings.getInstance().getPassword());
             getDirList(null);
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
@@ -111,7 +107,7 @@ public class Client implements Runnable {
 //        thread.setDaemon(true);
     }
 
-    public void sendAuthMessage(){
+    public void sendAuthMessage(String email, String password){
         channel.writeAndFlush(new AuthMessage("user3@vasyunin.ru", "password3"));
     }
 }
