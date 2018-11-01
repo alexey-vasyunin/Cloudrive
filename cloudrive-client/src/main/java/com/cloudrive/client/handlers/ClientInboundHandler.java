@@ -14,7 +14,7 @@ import java.io.RandomAccessFile;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
+public class ClientInboundHandler extends ChannelInboundHandlerAdapter {
 
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         if (msg instanceof TransferCommon) {
@@ -25,7 +25,6 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
 
         }
     }
-
 
     private void RemoteDirList(DirMessage msg) throws Exception {
             Platform.runLater(() -> Client.getInstance().getMainController().refreshFileList(msg.getFiles()));

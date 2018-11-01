@@ -17,9 +17,7 @@ public class AuthHandler extends ChannelInboundHandlerAdapter {
             if (storagename != null) {
                 UserProps userProps = new UserProps(storagename);
                 ctx.pipeline()
-                        .addLast(new PartOfFileInboundHandler(userProps))
-                        .addLast(new DirListInboundHandler(userProps))
-                        .addLast(new RequestFileInboundHandler(userProps))
+                        .addLast(new ServerInboundHandler(userProps))
                         .remove(this); // Мы авторизовались и хендлер авторизации более не нужен
             } else {
                 System.out.println("Wrong username or password!");

@@ -1,12 +1,8 @@
 package com.cloudrive.server;
 
-import com.cloudrive.common.handlers.FilterHandlerInbound;
 import com.cloudrive.common.handlers.FilterHandlerOutbound;
 import com.cloudrive.server.handlers.AuthHandler;
-import com.cloudrive.server.handlers.DirListInboundHandler;
-import com.cloudrive.server.handlers.PartOfFileInboundHandler;
 import io.netty.bootstrap.ServerBootstrap;
-import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
@@ -35,7 +31,6 @@ public class CloudriveServer implements Runnable {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new FilterHandlerInbound(),
                                     new FilterHandlerOutbound(),
                                     new AuthHandler()
                             );

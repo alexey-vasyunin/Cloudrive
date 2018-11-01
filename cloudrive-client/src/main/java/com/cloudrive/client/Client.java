@@ -1,10 +1,9 @@
 package com.cloudrive.client;
 
-import com.cloudrive.client.handlers.ServerInboundHandler;
+import com.cloudrive.client.handlers.ClientInboundHandler;
 import com.cloudrive.common.AuthMessage;
 import com.cloudrive.common.Command;
 import com.cloudrive.common.TransferCommandType;
-import com.cloudrive.common.handlers.FilterHandlerInbound;
 import com.cloudrive.common.handlers.FilterHandlerOutbound;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
@@ -64,7 +63,7 @@ public class Client implements Runnable {
                                     new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
                                     new FilterHandlerOutbound(),
-                                    new ServerInboundHandler()
+                                    new ClientInboundHandler()
                             );
                         }
                     });
