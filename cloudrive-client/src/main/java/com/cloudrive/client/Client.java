@@ -1,7 +1,6 @@
 package com.cloudrive.client;
 
-import com.cloudrive.client.handlers.DownloadFileInboundHandler;
-import com.cloudrive.client.handlers.RemoteDirListInboundHandler;
+import com.cloudrive.client.handlers.ServerInboundHandler;
 import com.cloudrive.common.AuthMessage;
 import com.cloudrive.common.Command;
 import com.cloudrive.common.TransferCommandType;
@@ -64,10 +63,8 @@ public class Client implements Runnable {
                             socketChannel.pipeline().addLast(
                                     new ObjectDecoder(1024*1024*10, ClassResolvers.cacheDisabled(null)),
                                     new ObjectEncoder(),
-                                    new FilterHandlerInbound(),
                                     new FilterHandlerOutbound(),
-                                    new RemoteDirListInboundHandler(),
-                                    new DownloadFileInboundHandler()
+                                    new ServerInboundHandler()
                             );
                         }
                     });

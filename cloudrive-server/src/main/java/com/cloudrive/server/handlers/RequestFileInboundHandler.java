@@ -38,7 +38,7 @@ public class RequestFileInboundHandler extends ChannelInboundHandlerAdapter {
                 int hasRead = raf.read(buf, 0, pof.lenght);
                 ctx.writeAndFlush(new PartOfFileMessage(
                         pof.filename,
-                        Arrays.copyOf(buf, hasRead),
+                        (hasRead == Settings.PART_FILE_SIZE) ? buf : Arrays.copyOf(buf, hasRead),
                         0,
                         pof.offset,
                         Settings.PART_FILE_SIZE,
