@@ -30,4 +30,8 @@ public class Command implements TransferCommon, TransferCommand, Serializable {
     public boolean isReadyToTransfer(){
         return command != null;
     }
+
+    public String[] getParams() {
+        return params;
+    }
 }

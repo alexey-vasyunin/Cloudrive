@@ -5,6 +5,7 @@ import com.cloudrive.common.AuthMessage;
 import com.cloudrive.common.Command;
 import com.cloudrive.common.TransferCommandType;
 import com.cloudrive.common.handlers.FilterHandlerOutbound;
+import com.cloudrive.common.interfaces.TransferCommon;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -103,7 +104,11 @@ public class Client implements Runnable {
 //        thread.setDaemon(true);
     }
 
+    public void sendObject(TransferCommon obj){
+        channel.writeAndFlush(obj);
+    }
+
     public void sendAuthMessage(String email, String password){
-        channel.writeAndFlush(new AuthMessage("user3@vasyunin.ru", "password3"));
+        channel.writeAndFlush(new AuthMessage(email, password));
     }
 }

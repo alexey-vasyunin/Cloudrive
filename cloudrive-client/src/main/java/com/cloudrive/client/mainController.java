@@ -7,6 +7,7 @@ import com.cloudrive.common.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
@@ -17,6 +18,7 @@ import javafx.scene.control.SelectionMode;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.FileChooser;
@@ -59,10 +61,19 @@ public class mainController implements Initializable {
 
         TableColumn<FileListItem, String> tcName = new TableColumn<>("Name");
         tcName.setPrefWidth(500);
-        tcName.setCellValueFactory(new PropertyValueFactory<FileListItem, String>("name"));
+        tcName.setCellValueFactory(new PropertyValueFactory<>("name"));
+        tcName.setCellFactory(TextFieldTableCell.forTableColumn());
+        tcName.setOnEditCommit(event -> {
+            FileListItem fli = event.getTableView().getItems().get(event.getTablePosition().getRow());
+            String oldName = fli.getName();
+
+            // Отправляем команду переименования на сервер
+            Client.getInstance().sendObject(new Command(TransferCommandType.RENAME, oldName, event.getNewValue()));
+            fli.setName(event.getNewValue());
+        });
 
         TableColumn<FileListItem, Integer> tcSize = new TableColumn<>("Size");
-        tcSize.setCellValueFactory(new PropertyValueFactory<FileListItem, Integer>("size"));
+        tcSize.setCellValueFactory(new PropertyValueFactory<>("size"));
 
         fileList.getColumns().addAll(tcName, tcSize);
         fileList.setItems(files);
@@ -101,15 +112,15 @@ public class mainController implements Initializable {
         System.out.println("Send (controller)");
     }
 
-    public void downloadButtonAction(ActionEvent actionEvent){
+    public void downloadButtonAction(ActionEvent actionEvent) {
         fileList.getSelectionModel().getSelectedItems().forEach(fileListItem -> {
             Thread thread = new Thread(() -> {
-                int parts = (int)Math.ceil((double) fileListItem.getSize() / Settings.PART_FILE_SIZE );
+                int parts = (int) Math.ceil((double) fileListItem.getSize() / Settings.PART_FILE_SIZE);
                 for (int i = 0; i < parts; i++) {
                     Client.getInstance().getChannel().writeAndFlush(
                             new PartOfFileRequest(
                                     fileListItem.getName(),
-                                    i*Settings.PART_FILE_SIZE,
+                                    i * Settings.PART_FILE_SIZE,
                                     Settings.PART_FILE_SIZE)
                     );
                 }

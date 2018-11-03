@@ -24,11 +24,15 @@ public class DirMessage implements TransferCommon, Serializable {
         return TransferObjectType.DIRLIST;
     }
 
-    public DirMessage(String path) throws IOException {
-        files = new ArrayList<>();
-        DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(path));
-        for (Path p : stream) {
-            files.add(new FileItem(p.getFileName().toString(), Files.size(p), Files.isDirectory(p)));
+    public DirMessage(String path) {
+        try {
+            files = new ArrayList<>();
+            DirectoryStream<Path> stream = Files.newDirectoryStream(Paths.get(path));
+            for (Path p : stream) {
+                files.add(new FileItem(p.getFileName().toString(), Files.size(p), Files.isDirectory(p)));
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

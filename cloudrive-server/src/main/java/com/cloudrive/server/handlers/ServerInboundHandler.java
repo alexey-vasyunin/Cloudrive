@@ -9,15 +9,17 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInboundHandlerAdapter;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.nio.file.CopyOption;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 
 public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
-    UserProps user;
-    ChannelHandlerContext ctx;
+    private UserProps user;
+    private ChannelHandlerContext ctx;
 
     public ServerInboundHandler(UserProps user) {
         this.user = user;
@@ -29,7 +31,7 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
         if (msg instanceof TransferCommon) {
             switch (((TransferCommon) msg).getType()){
                 case FILE: partOfFile((PartOfFileMessage) msg); break;
-                case COMMAND: dirList((TransferCommand) msg); requestFile(msg); break;
+                case COMMAND: commandSwitcher(msg); break;
             }
         }
     }
@@ -39,8 +41,31 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
         cause.printStackTrace();
     }
 
+    private void commandSwitcher(Object msg){
+        switch (((TransferCommand)msg).getCommandType()){
+            case GETDIRLIST: dirList(); break;
+            case FILEREQUEST: requestFile((PartOfFileRequest)msg); break;
+            case RENAME: renameFile((Command)msg); break;
+        }
+    }
+
+    private void renameFile(Command command){
+        String[] params = command.getParams();
+        if (params.length < 1) return;
+        Path source = getPath(params[0]);
+
+        try {
+            Files.move(source, source.resolveSibling(params[1]));
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            dirList();
+        }
+
+    }
+
     private void partOfFile(PartOfFileMessage msg) throws Exception {
-            Path p = Paths.get(CloudriveServer.STORAGE_PATH + File.separator + user.storagename + File.separator + msg.getFilename());
+            Path p = getPath(msg.getFilename());
 
             if (!Files.exists(p)) Files.createFile(p);
 
@@ -50,17 +75,13 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
             }
     }
 
-    private void dirList(TransferCommand msg) throws Exception {
-        if (msg.getCommandType() == TransferCommandType.GETDIRLIST) {
+    private void dirList() {
             ctx.writeAndFlush(new DirMessage(CloudriveServer.STORAGE_PATH + File.separator + user.storagename ));
-        }
     }
 
-    private void requestFile(Object msg) throws Exception {
+    private void requestFile(PartOfFileRequest pof) {
         // Если это запрос на часть файла с сервера
-        if (((TransferCommand) msg).getCommandType() == TransferCommandType.FILEREQUEST) {
-            PartOfFileRequest pof = (PartOfFileRequest)msg;
-            Path p = Paths.get(CloudriveServer.STORAGE_PATH + File.separator + user.storagename + File.separator + pof.filename);
+            Path p = getPath(pof.filename);
 
             if (!Files.exists(p)) return;
 
@@ -76,7 +97,12 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
                         Settings.PART_FILE_SIZE,
                         0
                 ));
+            } catch (IOException e) {
+                e.printStackTrace();
             }
-        }
+    }
+
+    private Path getPath(String filename){
+        return Paths.get(CloudriveServer.STORAGE_PATH + File.separator + user.storagename + File.separator + filename);
     }
 }

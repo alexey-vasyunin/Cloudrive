@@ -31,4 +31,8 @@ public class FileListItem {
     public Integer getSize() {
         return size;
     }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 }
