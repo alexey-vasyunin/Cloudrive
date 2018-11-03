@@ -22,24 +22,20 @@ public class FileSendThread extends Thread {
         }
 
         int parts = (int)Math.ceil((double) file.length() / Settings.PART_FILE_SIZE );
-        System.out.println("parts: " + parts);
-        byte[] partbytes = new byte[Settings.PART_FILE_SIZE];
+        byte[] buf = new byte[Settings.PART_FILE_SIZE];
         for (int i = 0; i < parts; i++) {
-            System.out.println("i: " + i);
             try {
-                System.out.println("" + i + " " + i * Settings.PART_FILE_SIZE + " " + this.hashCode());
                 RandomAccessFile raf = new RandomAccessFile(file.getAbsoluteFile(), "r");
                 raf.seek(i * Settings.PART_FILE_SIZE);
-                int lenght = raf.read(partbytes, 0, Settings.PART_FILE_SIZE);
-                System.out.println("Length" + lenght);
+                int hasRead = raf.read(buf, 0, Settings.PART_FILE_SIZE);
                 // Создаем и отправляем объект на сервер
                 channel.writeAndFlush(
                         new PartOfFileMessage(
                                 file.getName(),
-                                Arrays.copyOf(partbytes, lenght),
+                                (hasRead == buf.length) ? buf : Arrays.copyOf(buf, hasRead),
                                 i,
                                 i * Settings.PART_FILE_SIZE,
-                                lenght,
+                                hasRead,
                                 this.hashCode()
                         )
                 );
@@ -51,15 +47,6 @@ public class FileSendThread extends Thread {
                 return;
             } catch (IOException e) {
                 //TODO Что то пошло не так, надо обработать
-                e.printStackTrace();
-            }
-
-            // пока мы не умеем получать из отдельного треда обратную связь о получении
-            // того или иного объекта (но упорно думаем над этим), то делаем небольшую
-            // паузу что бы конвеер успевал хоть немного разгузиться
-            try {
-                Thread.sleep(300);
-            } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }

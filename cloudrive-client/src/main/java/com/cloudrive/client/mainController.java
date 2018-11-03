@@ -103,9 +103,9 @@ public class mainController implements Initializable {
 
     public void downloadButtonAction(ActionEvent actionEvent){
         fileList.getSelectionModel().getSelectedItems().forEach(fileListItem -> {
-            System.out.println("Requering " + fileListItem.getName());
             Thread thread = new Thread(() -> {
-                for (int i = 0; i < fileListItem.getSize() / Settings.PART_FILE_SIZE; i++) {
+                int parts = (int)Math.ceil((double) fileListItem.getSize() / Settings.PART_FILE_SIZE );
+                for (int i = 0; i < parts; i++) {
                     Client.getInstance().getChannel().writeAndFlush(
                             new PartOfFileRequest(
                                     fileListItem.getName(),
