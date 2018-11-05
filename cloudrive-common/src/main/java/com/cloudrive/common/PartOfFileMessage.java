@@ -11,36 +11,17 @@ public class PartOfFileMessage implements FileMessage, TransferCommon, Serializa
     private byte[] part;
     private byte[] digest;
     private int count;
+    private int lastcount;
     private long offset;
     private String filename;
     private int lenght;
     private int threadId; // Пригодится для поиска треда, что бы передать ему ответ от сервера
 
-    public PartOfFileMessage() {
-        this.count = -1;
-    }
-
-    public PartOfFileMessage(byte[] part) {
-        this.part = part;
-        this.count = -1;
-    }
-
-    public PartOfFileMessage(byte[] part, int count) {
-        this.part = part;
-        this.count = count;
-    }
-
-    public PartOfFileMessage(byte[] part, int count, long offset, int lenght) {
-        this.part = part;
-        this.count = count;
-        this.offset = offset;
-        this.lenght = lenght;
-    }
-
-    public PartOfFileMessage(String filename, byte[] part, int count, long offset, int lenght, int threadId) {
+    public PartOfFileMessage(String filename, byte[] part, int count, int lastcount, long offset, int lenght, int threadId) {
         this.filename = filename;
         this.part = part;
         this.count = count;
+        this.lastcount = lastcount;
         this.offset = offset;
         this.lenght = lenght;
         this.threadId = threadId;
@@ -86,11 +67,12 @@ public class PartOfFileMessage implements FileMessage, TransferCommon, Serializa
         return offset;
     }
 
-    public void setOffset(long offset) {
-        this.offset = offset;
-    }
-
     public String getFilename() {
         return filename;
+    }
+
+    public boolean isLastPart(){
+        System.out.println(count + " # " + lastcount);
+        return count == lastcount-1;
     }
 }

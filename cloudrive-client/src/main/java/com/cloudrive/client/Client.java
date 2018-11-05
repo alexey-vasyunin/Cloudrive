@@ -74,7 +74,7 @@ public class Client implements Runnable {
             getDirList(null);
             channelFuture.channel().closeFuture().sync();
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            System.out.println("Client connection closing...");
         } finally {
             try {
                 group.shutdownGracefully().sync();
@@ -92,16 +92,16 @@ public class Client implements Runnable {
      */
     public void sendFileToStorage(File file) {
         Thread thread = new FileSendThread(file, channel);
-        thread.start();
         thread.setDaemon(true);
+        thread.start();
     }
 
     public void getDirList(String path) throws InterruptedException {
         Thread thread = new Thread(() -> {
             channel.writeAndFlush(new Command(TransferCommandType.GETDIRLIST, path));
         });
+        thread.setDaemon(true);
         thread.start();
-//        thread.setDaemon(true);
     }
 
     public void sendObject(TransferCommon obj){
@@ -111,4 +111,5 @@ public class Client implements Runnable {
     public void sendAuthMessage(String email, String password){
         channel.writeAndFlush(new AuthMessage(email, password));
     }
+
 }

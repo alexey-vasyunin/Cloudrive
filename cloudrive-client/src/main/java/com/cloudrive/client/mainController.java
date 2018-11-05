@@ -4,6 +4,7 @@ import com.cloudrive.client.Client;
 import com.cloudrive.client.filelist.FileListItem;
 import com.cloudrive.client.filelist.ItemType;
 import com.cloudrive.common.*;
+import io.netty.channel.Channel;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
@@ -41,6 +42,10 @@ public class mainController implements Initializable {
     Button sendButton;
     @FXML
     Button downloadButton;
+    @FXML
+    Button renameButton;
+    @FXML
+    Button deleteButton;
 
     private ObservableList<FileListItem> files;
 
@@ -82,7 +87,6 @@ public class mainController implements Initializable {
             Обрабатываем событие Drag'n'Drop (протаскивание над списком файлов)
          */
         fileList.setOnDragOver(event -> {
-            System.out.println(event);
             if (event.getGestureSource() != fileList && event.getDragboard().hasFiles()) {
                 event.acceptTransferModes(TransferMode.COPY_OR_MOVE);
             }
@@ -97,7 +101,6 @@ public class mainController implements Initializable {
             boolean result = false;
             for (int i = 0; i < dragboard.getFiles().size(); i++) {
                 Client.getInstance().sendFileToStorage(dragboard.getFiles().get(i));
-                System.out.println(dragboard.getFiles().get(i).isDirectory());
                 result = true;
             }
             event.setDropCompleted(result);
@@ -107,10 +110,6 @@ public class mainController implements Initializable {
         fileList.getSelectionModel().setSelectionMode(SelectionMode.SINGLE);
     }
 
-
-    public void buttonSendClicked(ActionEvent actionEvent) {
-        System.out.println("Send (controller)");
-    }
 
     public void downloadButtonAction(ActionEvent actionEvent) {
         fileList.getSelectionModel().getSelectedItems().forEach(fileListItem -> {
@@ -132,6 +131,7 @@ public class mainController implements Initializable {
     }
 
     public void refreshFileList(ArrayList<DirMessage.FileItem> fli) {
+        files.clear();
         fli.forEach(fileItem -> {
             files.add(new FileListItem(ItemType.FILE, fileItem.getFilename(), (int) fileItem.getSize(), null));
         });
@@ -151,5 +151,19 @@ public class mainController implements Initializable {
             e.printStackTrace();
         }
 
+    }
+
+    public void uploadFile(){
+        FileChooser fc = new FileChooser();
+        fc.showOpenMultipleDialog(sendButton.getScene().getWindow()).forEach(file -> Client.getInstance().sendFileToStorage(file));
+    }
+
+    public void renameButtonAction(ActionEvent event) {
+        fileList.edit(fileList.getSelectionModel().getSelectedIndex(), fileList.getColumns().get(0));
+    }
+
+    public void deleteButtonAction(ActionEvent event) {
+        String filename = fileList.getSelectionModel().getSelectedItem().getName();
+        Client.getInstance().sendObject(new Command(TransferCommandType.DELETE, filename));
     }
 }

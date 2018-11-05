@@ -1,49 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import java.lang.*?>
-<?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
-<?import javafx.scene.control.ListView?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.VBox?>
-<?import javafx.scene.control.TableView?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.HBox?>
-<?import javafx.scene.control.Label?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.ToolBar?>
-<?import javafx.scene.layout.Region?>
 
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cloudrive.client.mainController">
+<GridPane xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.cloudrive.client.mainController">
    <children>
-   
-       <VBox fillWidth="true">
-      <children>
-              <ToolBar>
-                  <items>
-                      <Button fx:id="settingsButton" text="Settings" onAction="#settingsApplication"/>
-                  </items>
-              </ToolBar>
-              <TableView fx:id="fileList" editable="true" prefWidth="Infinity">
+          <VBox GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS">
+             <children>
+                    <ToolBar>
+                        <items>
+                            <Button fx:id="settingsButton" onAction="#settingsApplication" text="Settings" />
+                            <Button fx:id="uploadButton" onAction="#uploadFile">Upload</Button>
+                            <Button fx:id="downloadButton" onAction="#downloadButtonAction">Download</Button>
+                            <Button fx:id="renameButton" onAction="#renameButtonAction">Rename</Button>
+                            <Button fx:id="deleteButton" onAction="#deleteButtonAction">Delete</Button>
 
-        </TableView>
-              <HBox prefWidth="Infinity">
-                 <children>
-                     <Button fx:id="sendButton" HBox.hgrow="ALWAYS">Send</Button>
-                     <Button fx:id="downloadButton" onAction="#downloadButtonAction" HBox.hgrow="ALWAYS">Download</Button>
-                 </children>
-              </HBox>
-              <HBox alignment="CENTER_LEFT">
-                  <padding>
-                      <Insets left="5" top="5" />
-                  </padding>
-                 <children>
-                     <Label fx:id="statusLabel">Disconnected</Label>
-                 </children>
-              </HBox>
-      </children>
-       </VBox>
+                        </items>
+                    </ToolBar>
+                    <TableView fx:id="fileList" editable="true" GridPane.hgrow="ALWAYS" GridPane.vgrow="ALWAYS" VBox.vgrow="ALWAYS" />
+             </children>
+          </VBox>
    </children>
-
-</AnchorPane>
+   <columnConstraints>
+      <ColumnConstraints />
+   </columnConstraints>
+   <rowConstraints>
+      <RowConstraints />
+   </rowConstraints>
+</GridPane>

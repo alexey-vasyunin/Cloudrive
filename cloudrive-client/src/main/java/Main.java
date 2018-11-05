@@ -1,10 +1,13 @@
 import com.cloudrive.client.Client;
 import com.cloudrive.client.AppSettings;
+import com.cloudrive.client.mainController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.Window;
+import javafx.stage.WindowEvent;
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
@@ -16,6 +19,7 @@ public class Main extends Application {
     public static void main(String[] args) {
         launch(args);
     }
+    private mainController mc;
 
     public void start(Stage primaryStage) throws Exception {
 
@@ -32,14 +36,22 @@ public class Main extends Application {
         Parent root = fxmlLoader.load();
 
         primaryStage.setTitle("Cloudrive v" + model.getVersion());
-        Scene scene = new Scene(root, 650, 500);
+        Scene scene = new Scene(root, 650, 400);
         primaryStage.setScene(scene);
 
-        primaryStage.show();
+
+
         Client client = Client.getInstance();
         client.setMainController(fxmlLoader.getController());
         Thread thread = new Thread(client);
+        thread.setDaemon(true);
         thread.start();
 
+        scene.getWindow().addEventFilter(WindowEvent.WINDOW_CLOSE_REQUEST, event -> {
+            if (thread.isAlive()) thread.interrupt();
+        });
+
+        primaryStage.show();
     }
+
 }

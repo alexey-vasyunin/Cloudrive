@@ -45,12 +45,18 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
         switch (((TransferCommand)msg).getCommandType()){
             case GETDIRLIST: dirList(); break;
             case FILEREQUEST: requestFile((PartOfFileRequest)msg); break;
-            case RENAME: renameFile((Command)msg); break;
+            case RENAME: renameFile(((Command)msg).getParams()); break;
+            case DELETE: deleteFile(((Command)msg).getParams());
         }
     }
 
-    private void renameFile(Command command){
-        String[] params = command.getParams();
+    private void deleteFile(String... params){
+        if (params.length <= 0) return;
+        File f = getPath(params[0]).toFile();
+        if (f.exists() && f.delete()) dirList();
+    }
+
+    private void renameFile(String... params){
         if (params.length < 1) return;
         Path source = getPath(params[0]);
 
@@ -73,6 +79,8 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
                 raf.seek(msg.getOffset());
                 raf.write(msg.getPartFile());
             }
+
+            if (msg.isLastPart()) dirList();
     }
 
     private void dirList() {
@@ -92,6 +100,7 @@ public class ServerInboundHandler extends ChannelInboundHandlerAdapter {
                 ctx.writeAndFlush(new PartOfFileMessage(
                         pof.filename,
                         (hasRead == buf.length) ? buf : Arrays.copyOf(buf, hasRead),
+                        0,
                         0,
                         pof.offset,
                         Settings.PART_FILE_SIZE,

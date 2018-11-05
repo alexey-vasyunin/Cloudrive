@@ -36,11 +36,6 @@ public class DirMessage implements TransferCommon, Serializable {
         }
     }
 
-    public DirMessage(FileItem[] files) {
-        this.files = new ArrayList<>();
-        this.files.addAll(Arrays.asList(files));
-    }
-
     public void addFileItem(FileItem file) {
         files.add(file);
     }

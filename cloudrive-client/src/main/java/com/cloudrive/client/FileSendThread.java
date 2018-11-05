@@ -34,6 +34,7 @@ public class FileSendThread extends Thread {
                                 file.getName(),
                                 (hasRead == buf.length) ? buf : Arrays.copyOf(buf, hasRead),
                                 i,
+                                parts,
                                 i * Settings.PART_FILE_SIZE,
                                 hasRead,
                                 this.hashCode()
